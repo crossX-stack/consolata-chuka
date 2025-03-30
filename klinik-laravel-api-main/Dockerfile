@@ -14,8 +14,18 @@ RUN apt-get update && apt-get install -y \
     git \
     curl \
     libpq-dev \
+    nano \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql
+
+# Copy custom php.ini to ensure it's always loaded
+COPY php.ini /usr/local/etc/php/php.ini
+
+# Copy Apache configuration to make changes persistent
+COPY apache-config.conf /etc/apache2/sites-available/000-default.conf
+
+# Enable mod_rewrite for Laravel
+RUN a2enmod rewrite
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -31,6 +41,11 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expose port 80
+EXPOSE 80
+
+# Start Apache in foreground
+CMD ["apache2-foreground"]
+
 EXPOSE 80
 
 # Start Apache in foreground
