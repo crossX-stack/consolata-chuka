@@ -1,10 +1,10 @@
-# Use official PHP 8.2 image with Apache
-FROM php:8.2-apache
+# Use official PHP 8.3 image with Apache
+FROM php:8.3-apache
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install system dependencies
+# Install system dependencies and PHP extensions
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libjpeg-dev \
@@ -13,8 +13,9 @@ RUN apt-get update && apt-get install -y \
     unzip \
     git \
     curl \
+    libpq-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_mysql
+    && docker-php-ext-install gd pdo pdo_mysql pdo_pgsql
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -34,3 +35,4 @@ EXPOSE 80
 
 # Start Apache in foreground
 CMD ["apache2-foreground"]
+
