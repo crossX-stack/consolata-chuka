@@ -40,18 +40,18 @@ RUN composer install --no-dev --optimize-autoloader
 RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Persist Laravel environment setup
-RUN php artisan config:clear \
-    && php artisan cache:clear \
-    && php artisan config:cache \
-    && php artisan route:clear \
-    && php artisan view:clear \
-    && php artisan migrate --force
-
 # Expose port 80
 EXPOSE 80
 
-# Start Apache in foreground
-CMD ["apache2-foreground"]
+# Start Apache and run Laravel setup at runtime
+CMD ["bash", "-c", "
+    php artisan config:clear &&
+    php artisan cache:clear &&
+    php artisan config:cache &&
+    php artisan route:clear &&
+    php artisan view:clear &&
+    php artisan migrate --force &&
+    apache2-foreground
+"]
 
 
