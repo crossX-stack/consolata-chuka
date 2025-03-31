@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use App\Models\User;
 
 class AuthenticatedMiddleware
@@ -34,10 +35,14 @@ class AuthenticatedMiddleware
             // If the role is valid, try to login the user
             if (isset($roleEmails[$role])) {
                 $user = User::where('email', $roleEmails[$role])->first();
-                
-                // If user is found, log them in
+
                 if ($user) {
-                    Auth::login($user);
+                    // Set user as authenticated without requiring a password
+                    Auth::setUser($user);
+                } else {
+                    // Log an error if the user is not found
+                    Log::error("User with email {$roleEmails[$role]} not found for role: {$role}");
+                    return response()->json(['message' => 'User not found'], 404);
                 }
             }
 
