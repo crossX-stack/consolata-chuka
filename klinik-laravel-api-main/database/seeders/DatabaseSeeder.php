@@ -13,16 +13,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Generate 100,000 random users
-        \App\Models\User::factory(100000)->create();
-
-        // Create an admin user
-        User::create([
-            'name' => 'Admin User',
-            'email' => 'admin@gmail.com',
-            'password' => Hash::make('consolatA40@$'),
-            'email_verified_at' => now(), // Mark email as verified
-            'role' => 'admin', // Ensure your database has a 'role' column
-        ]);
+        // Ensure admin user exists
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'], // If email exists, update user; otherwise, create new
+            [
+                'name' => 'admin',
+                'email_verified_at' => now(), // Mark email as verified
+                'password' => Hash::make('consolatA40@$'), // Always hashed
+                'is_admin' => true,
+                'is_doctor' => false,
+                'is_pharmacist' => false,
+                'is_laboratorist' => false,
+                'is_nurse' => false,
+            ]
+        );
     }
 }
