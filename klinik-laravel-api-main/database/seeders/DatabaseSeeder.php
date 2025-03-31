@@ -13,13 +13,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Ensure admin user exists
+        // Create an admin user
         User::updateOrCreate(
-            ['email' => 'admin@gmail.com'], // If email exists, update user; otherwise, create new
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'admin',
-                'email_verified_at' => now(), // Mark email as verified
-                'password' => Hash::make('consolatA40@$'), // Always hashed
+                'email_verified_at' => now(),
+                'password' => Hash::make('consolatA40@$'), // Hashed password
                 'is_admin' => true,
                 'is_doctor' => false,
                 'is_pharmacist' => false,
