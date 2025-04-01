@@ -45,7 +45,7 @@ Route::get('/users', function () {
 });
 
 
-Route::prefix('v1')->group(function () use ($router) {
+Route::prefix('v1')->group(function () {
     // Authentication EndPoints
     Route::post('/register', [RegisteredUserController::class, 'store'])
         ->middleware('guest')
