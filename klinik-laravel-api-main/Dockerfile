@@ -46,10 +46,7 @@ COPY . .
 # Ensure required directories exist
 RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/uploads
 
-# Check if 'www-data' user exists, create if necessary
-RUN if ! id -u www-data &>/dev/null; then useradd -r -u 33 -g www-data www-data; fi
-
-# Set permissions
+# Set permissions for existing www-data user
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/uploads
 
