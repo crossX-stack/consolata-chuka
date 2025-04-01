@@ -35,7 +35,7 @@ RUN a2enmod rewrite && a2enmod headers
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Copy only composer files first for better caching
-COPY composer.json composer.lock ./
+COPY composer.json composer.lock ./ 
 
 # Install Laravel dependencies
 RUN composer install --no-dev --no-scripts --optimize-autoloader
@@ -43,9 +43,15 @@ RUN composer install --no-dev --no-scripts --optimize-autoloader
 # Copy all files
 COPY . .
 
+# Ensure required directories exist
+RUN mkdir -p /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/uploads
+
+# Check if 'www-data' user exists, create if necessary
+RUN if ! id -u www-data &>/dev/null; then useradd -r -u 33 -g www-data www-data; fi
+
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 775 storage bootstrap/cache public/uploads
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public/uploads
 
 # Run composer scripts
 RUN composer run-script post-install-cmd
